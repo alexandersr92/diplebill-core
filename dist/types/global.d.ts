@@ -28,5 +28,5 @@ export interface IMetaRequestParams {
     store_id?: string;
 }
 export interface IInventoryMetaRequestParams {
-    store: string;
+    store?: string;
 }

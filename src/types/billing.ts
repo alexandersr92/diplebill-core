@@ -169,7 +169,7 @@ export interface IInvoice {
   products: IInvoiceProducts[];
   isCredit: boolean;
   init_payment: number;
-  seller_id: string;
+  seller_id: string | null;
   payment_metadata?: any;
 }
 
@@ -200,6 +200,7 @@ export interface IInvoiceBase {
   total_items: number;
   client: IInvoiceClient;
   grand_total: number;
+  invoice_note?: string | null;
 }
 
 export interface IInvoiceClient {

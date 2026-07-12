@@ -9,3 +9,10 @@ export interface IUserState {
   sellerCode?: string;
   isSellerAuthenticated?: boolean;
 }
+
+export interface IRegisterForm {
+  email: string;
+  password: string;
+  password_confirm: string;
+  name: string;
+}

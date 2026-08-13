@@ -4,6 +4,7 @@ import { getPaperPreset } from './paper';
 import { getComponent } from './registry';
 import type {
   AreaId,
+  ComponentInstanceStyle,
   InvoiceRenderData,
   InvoiceTemplate,
   RenderContext,
@@ -11,6 +12,16 @@ import type {
 } from './types';
 
 const AREAS: AreaId[] = ['header', 'body', 'footer'];
+
+/** CSS del estilo simple por-instancia (font-size, negrita, alineación). */
+const instanceStyle = (s?: ComponentInstanceStyle): string => {
+  if (!s) return '';
+  let css = '';
+  if (s.fontSizePt) css += `font-size:${Number(s.fontSizePt)}pt;`;
+  if (s.bold) css += 'font-weight:500;';
+  if (s.align) css += `text-align:${s.align};`;
+  return css;
+};
 
 const DEFAULT_STYLES: Required<
   Pick<TemplateStyles, 'accent' | 'fontFamily' | 'baseFontPt' | 'align' | 'marginMm'>
@@ -54,7 +65,7 @@ const renderInstances = (
       const def = getComponent(inst.type);
       if (!def) continue; // componente desconocido: se omite
       const html = def.render(inst.props || {}, data, ctx);
-      if (html) inner += `<div style="margin:2px 0;">${html}</div>`;
+      if (html) inner += `<div style="margin:2px 0;${instanceStyle(inst.style)}">${html}</div>`;
     }
     out += `<div data-area="${area}">${inner}</div>`;
   }

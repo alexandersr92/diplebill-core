@@ -23,14 +23,24 @@ export type AreaId = 'header' | 'body' | 'footer';
 
 export type TextAlign = 'left' | 'center' | 'right';
 
+/** Estilo simple por-instancia, común a todos los componentes de texto. */
+export interface ComponentInstanceStyle {
+  /** tamaño de fuente del bloque en pt (vacío = hereda el base de la plantilla). */
+  fontSizePt?: number;
+  bold?: boolean;
+  align?: TextAlign;
+}
+
 /** Una instancia de componente colocada en un área. */
 export interface ComponentInstance {
   /** id único dentro de la plantilla (para reordenar/editar). */
   id: string;
   /** clave del componente en el registro. */
   type: string;
-  /** props de esta instancia (según el `propsSchema` del componente). */
+  /** props específicas del componente (según su `propsSchema`). */
   props?: Record<string, unknown>;
+  /** estilo simple (font-size, negrita, alineación) aplicado a este bloque. */
+  style?: ComponentInstanceStyle;
 }
 
 export interface TemplateStyles {
@@ -168,6 +178,8 @@ export interface ComponentDefinition {
   icon: string;
   /** true si el componente lee de los datos de la venta (no solo de sus props). */
   dataBound?: boolean;
+  /** true si es un bloque de texto: el editor le muestra el estilo (font-size/negrita/alineación). */
+  textual?: boolean;
   /** áreas sugeridas donde tiene sentido (informativo para el editor). */
   suggestedAreas?: AreaId[];
   propsSchema: PropField[];

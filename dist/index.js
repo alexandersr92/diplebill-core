@@ -20,6 +20,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
+  COMMON_STYLE_FIELDS: () => COMMON_STYLE_FIELDS,
   COMPONENTS: () => COMPONENTS,
   DOC_TYPE_LABEL: () => DOC_TYPE_LABEL,
   PAPER_SIZES: () => PAPER_SIZES,
@@ -546,6 +547,19 @@ var COMPONENTS = {
     render: (props) => `<div style="height:${num(props.heightMm, 4)}mm;"></div>`
   }
 };
+var TEXTUAL_TYPES = ["business", "title", "meta", "client", "items", "totals", "payment", "credit", "text", "signature"];
+for (const t of TEXTUAL_TYPES) {
+  if (COMPONENTS[t]) COMPONENTS[t].textual = true;
+}
+var COMMON_STYLE_FIELDS = [
+  { key: "fontSizePt", label: "Tama\xF1o de fuente (pt)", type: "number" },
+  { key: "bold", label: "Negrita", type: "boolean", default: false },
+  { key: "align", label: "Alineaci\xF3n", type: "select", options: [
+    { value: "left", label: "Izquierda" },
+    { value: "center", label: "Centro" },
+    { value: "right", label: "Derecha" }
+  ] }
+];
 var registerComponent = (def) => {
   COMPONENTS[def.type] = def;
 };
@@ -554,6 +568,14 @@ var listComponents = () => Object.values(COMPONENTS);
 
 // src/invoice-builder/render.ts
 var AREAS = ["header", "body", "footer"];
+var instanceStyle = (s) => {
+  if (!s) return "";
+  let css = "";
+  if (s.fontSizePt) css += `font-size:${Number(s.fontSizePt)}pt;`;
+  if (s.bold) css += "font-weight:500;";
+  if (s.align) css += `text-align:${s.align};`;
+  return css;
+};
 var DEFAULT_STYLES = {
   accent: "#534AB7",
   fontFamily: "sans",
@@ -584,7 +606,7 @@ var renderInstances = (template, data, ctx) => {
       const def = getComponent(inst2.type);
       if (!def) continue;
       const html = def.render(inst2.props || {}, data, ctx);
-      if (html) inner += `<div style="margin:2px 0;">${html}</div>`;
+      if (html) inner += `<div style="margin:2px 0;${instanceStyle(inst2.style)}">${html}</div>`;
     }
     out += `<div data-area="${area}">${inner}</div>`;
   }
@@ -659,6 +681,7 @@ var defaultTemplate = (documentType = "invoice", paperSize = "80mm") => {
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  COMMON_STYLE_FIELDS,
   COMPONENTS,
   DOC_TYPE_LABEL,
   PAPER_SIZES,

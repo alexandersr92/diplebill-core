@@ -2,6 +2,7 @@ import type {
   ComponentDefinition,
   DocumentType,
   InvoiceRenderData,
+  PropField,
   RenderContext,
 } from './types';
 
@@ -366,6 +367,24 @@ export const COMPONENTS: Record<string, ComponentDefinition> = {
     render: (props) => `<div style="height:${num(props.heightMm, 4)}mm;"></div>`,
   },
 };
+
+// Bloques de texto: el editor les muestra el estilo simple (tamaño/negrita/alineación).
+const TEXTUAL_TYPES = ['business', 'title', 'meta', 'client', 'items', 'totals', 'payment', 'credit', 'text', 'signature'];
+for (const t of TEXTUAL_TYPES) {
+  if (COMPONENTS[t]) COMPONENTS[t].textual = true;
+}
+
+/**
+ * Campos de estilo comunes a todos los bloques de texto. El editor los renderiza
+ * en una sección "Estilo" y los liga a `instance.style` (no a `instance.props`).
+ */
+export const COMMON_STYLE_FIELDS: PropField[] = [
+  { key: 'fontSizePt', label: 'Tamaño de fuente (pt)', type: 'number' },
+  { key: 'bold', label: 'Negrita', type: 'boolean', default: false },
+  { key: 'align', label: 'Alineación', type: 'select', options: [
+    { value: 'left', label: 'Izquierda' }, { value: 'center', label: 'Centro' }, { value: 'right', label: 'Derecha' },
+  ] },
+];
 
 /** Registra (o reemplaza) un componente en la biblioteca. Extensible en runtime. */
 export const registerComponent = (def: ComponentDefinition): void => {

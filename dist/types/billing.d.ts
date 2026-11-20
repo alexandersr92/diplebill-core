@@ -1,3 +1,5 @@
+import { ICategory } from './categories';
+import { IBrand } from './brands';
 export declare const SELL_TYPES: {
     CREDITO: string;
     CONTADO: string;
@@ -6,15 +8,13 @@ export declare const PAYMENT_METHODS: {
     EFECTIVO: string;
     TRANSFERENCIA: string;
 };
+export type InvoiceItemType = 'product' | 'free';
 export interface IGetBillingProducts {
     page: number;
     perPage: number;
     storeId?: string;
 }
-export interface ICategory {
-    id: string;
-    name: string;
-}
+export type { ICategory };
 export interface ITag {
     id: string;
     name: string;
@@ -32,6 +32,9 @@ export interface IProducts {
     quantity: number;
     min_stock: number;
     unit_of_measure: string;
+    category_id?: string | null;
+    brand_id?: string | null;
+    brand?: IBrand | null;
     categories: ICategory[];
     tags: ITag[];
     inventory: IInventoryInProduct[];
@@ -42,9 +45,15 @@ export interface IInventoryInProduct {
     inventory_id: string;
     inventory_name: string;
 }
-export interface IInvoiceProduct extends IProducts {
+export interface IInvoiceProduct extends Omit<Partial<IProducts>, 'product_id'> {
+    id: string;
+    name: string;
+    item_type?: InvoiceItemType;
+    description?: string | null;
+    product_id?: string | null;
+    cost?: number;
     inventory_name?: string;
-    inventory_id?: string;
+    inventory_id?: string | null;
     quantity: number;
     price: number;
     discount: number;
@@ -101,15 +110,18 @@ export interface IInvoice {
 }
 export interface IInvoices extends IInvoice {
     id: string;
-    invoice_status?: string;
+    invoice_status?: 'draft' | 'proforma' | 'completed' | 'credit' | 'canceled' | string;
     total_items?: number;
     client?: IInvoiceClient;
 }
-interface IInvoiceProducts {
-    product_id: string;
-    inventory_id: string;
+export interface IInvoiceProducts {
+    item_type?: InvoiceItemType;
+    description?: string | null;
+    product_id?: string | null;
+    inventory_id?: string | null;
     quantity: number;
     price: number;
+    cost?: number;
     total: number;
     discount: number;
     tax: number;
@@ -155,13 +167,16 @@ export interface ISingleInvoice extends IInvoiceBase {
     client_cedula_ruc?: string | null;
     invoice_details: {
         id: string;
-        product_id: string;
-        product_name: string;
-        inventory_id: string;
+        item_type?: InvoiceItemType;
+        description?: string | null;
+        product_id?: string | null;
+        product_name?: string | null;
+        inventory_id?: string | null;
         quantity: number;
         price: number;
+        cost?: number;
         total: number;
-        sku: string;
+        sku?: string | null;
         barcode?: string | null;
         discount?: number;
         tax?: number;
@@ -185,4 +200,3 @@ export interface IGetInvoiceResponse {
         current_page: number;
     };
 }
-export {};
